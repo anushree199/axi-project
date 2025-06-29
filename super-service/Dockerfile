@@ -1,34 +1,3 @@
-# FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-# WORKDIR /app
-
-# COPY ./src ./src
-# COPY ./test ./test
-# WORKDIR /app/src
-
-# RUN dotnet restore
-# RUN dotnet publish -c Release -o /app/out
-
-# FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS runtime
-# WORKDIR /app
-
-# # Create non-root user
-# RUN adduser -D appuser
-# USER appuser
-
-# COPY --from=build /app/out ./
-
-# # Copy mkcert certs
-# COPY https/localhost.pem /https/localhost.pem
-# COPY https/localhost-key.pem /https/localhost-key.pem
-
-# ENV ASPNETCORE_Kestrel__Certificates__Default__Path="/https/localhost.pem"
-# ENV ASPNETCORE_Kestrel__Certificates__Default__KeyPath="/https/localhost-key.pem"
-# ENV ASPNETCORE_URLS="https://+:5001;http://+:5000"
-
-# EXPOSE 5000
-# EXPOSE 5001
-
-# ENTRYPOINT ["dotnet", "SuperService.dll"]
 # Stage 1: Build using .NET 8 SDK Alpine image
 FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
 WORKDIR /app
