@@ -45,6 +45,7 @@ super-service/
 |    ├── localhost.pem
 |    └── localhost-key.pem
 ├── .env                      # Environment variables (like cert paths)
+├── .gitlab-ci.yml            # used by azure cloud if we are containerizing it in cloud        
 ├── Dockerfile                # Docker image definition using .NET 8 and HTTPS support
 ├── Deploy.ps1                # PowerShell deployment script for testing, building, and running the container
 └── README.md                 # Project documentation and setup instructions
@@ -118,7 +119,7 @@ super-service/
 │   ├── localhost.pem
 │   └── localhost-key.pem
 
-The Dockerfile assumes your mkcert certificates are already present inside the https/ directory.
+The Dockerfile assumes our mkcert certificates are already present inside the https/ directory.
 
 Breakdown of the Dockerfile (Explained Step-by-Step)
 
@@ -201,10 +202,10 @@ HTTPS: https://localhost:5001/time
 
 HTTP: http://localhost:5000/time
 
-Ensure your browser trusts the mkcert certificate.
+We should ensure our browser trusts the mkcert certificate.
 
 ## Why HTTPS with mkcert?
-mkcert allows you to generate trusted development certificates that simulate real HTTPS environments.
+mkcert allows us to generate trusted development certificates that simulate real HTTPS environments.
 Helps catch mixed content, CORS, and cookie issues early during local development.
 Improves parity between local and production.
 
@@ -335,17 +336,13 @@ else {
 }
 This block is reserved for future enhancement — such as cloud deployment (Azure, AWS, etc.).
 
-Here's the content you can **copy and paste directly** into a `README.md` or append to your existing one to explain how to use `Deploy.ps1`:
-
----
-
 ## How to Use Deploy.ps1
 
 The `Deploy.ps1` script automates local testing, Docker image creation, and running the application securely with HTTPS. This script is designed for local development and validation of the `.NET 8` Web API (`SuperService`) container.
 
 ### Prerequisites
 
-Ensure you have the following installed:
+Ensure we have the following installed:
 
 * Docker Desktop (running)
 * PowerShell (on Windows)
@@ -394,7 +391,7 @@ super-service/
    * Open the browser to `https://localhost:5001/time`
 
 3. **Verify**
-   Your API should be available at:
+   our API should be available at:
 
    * `https://localhost:5001/time` (secured with mkcert-generated cert)
    * `http://localhost:5000/time` (insecure fallback)
@@ -413,7 +410,7 @@ This is useful for use in CI environments or testing image builds only.
 
 | Problem                    | Cause                                      | Solution                                                                            |
 | -------------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------- |
-| Browser shows "Not Secure" | Certificate not trusted                    | Run `mkcert -install` and restart your browser                                      |
+| Browser shows "Not Secure" | Certificate not trusted                    | Run `mkcert -install` and restart our browser                                      |
 | Port already in use        | Another app or container is using the port | Run `docker ps`, find the container, then `docker rm -f <id>`                       |
 | Tests fail                 | Failing unit tests in `test/` folder       | Open and debug the test failures                                                    |
 | HTTPS not working          | Certs not found or not mounted correctly   | Ensure `https/localhost.pem` and `localhost-key.pem` exist and are mounted properly |
@@ -460,4 +457,4 @@ This setup provides a secure local development environment using
 - Automated test and deployment  
 - Clean separation of build and runtime layers  
 
-You are now ready to develop and test your .NET 8 Web API application with confidence in a secure and automated local environment.
+We are now ready to develop and test our .NET 8 Web API application with confidence in a secure and automated local environment.
