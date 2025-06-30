@@ -74,6 +74,8 @@ Before running this project, make sure you have the following installed
 
 ## Generating HTTPS Certificates with mkcert
 
+The below commands has to be run in powershell of windows system by running it as an administrator
+
 1. Install mkcert if not already available
 
    For example, using Chocolatey  
@@ -95,7 +97,7 @@ Dockerfile Guide for SuperService (.NET 8 Web API)
 
 The Dockerfile uses a multi-stage build
 
-1. The first stage builds the application using the .NET 8 SDK  
+1. The first stage builds the application using the sdk:8.0-alpine  
 2. The second stage runs the application using the lightweight Alpine-based ASP.NET runtime image  
 3. HTTPS certificate and key files are copied into the container  
 4. Environment variables configure the Kestrel server with the provided certificate  
@@ -227,6 +229,12 @@ The Deploy.ps1 script performs the following steps
 
 2. Run the command  
    ./Deploy.ps1  
+
+When we run the above command it will say there is no authorisation so we need to run below command to give temporary access to the above command to run
+
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
+Later it will ask to enter Y for yes and N for No we need to enter Y.
 
 3. This will  
    - Execute unit tests  
@@ -458,3 +466,19 @@ This setup provides a secure local development environment using
 - Clean separation of build and runtime layers  
 
 We are now ready to develop and test our .NET 8 Web API application with confidence in a secure and automated local environment.
+
+## .gitlab-ci.yml
+
+This .yml file builds the image stores it in ecr and app is deployed using app service
+The code is just written and its not tested. If extra time provided will be able to execute it. The infrastructure can be automated using terraform and then we can containerize docker. This is just a sample file how we could achieve it. 
+
+
+# how to see the logs incase of failure
+
+docker ps - it will list all containers
+docker logs super-service-container - to find the container
+docker exec -it container_id /bin/bash - enter the container shell
+ps aux - heck if the app crashed or stuck
+cat web.config
+dotnet test ./test/SuperService.UnitTests.csproj --logger "trx;LogFileName=test_results.trx" - helps to store the logs in a file and we can read it from here and debug
+docker rm -f super-service-container - remove the crashed container
