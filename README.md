@@ -476,9 +476,15 @@ The code is just written and its not tested. If extra time provided will be able
 # how to see the logs incase of failure
 
 docker ps - it will list all containers
+
 docker logs super-service-container - to find the container
+
 docker exec -it container_id /bin/bash - enter the container shell
+
 ps aux - heck if the app crashed or stuck
+
 cat web.config
+
 dotnet test ./test/SuperService.UnitTests.csproj --logger "trx;LogFileName=test_results.trx" - helps to store the logs in a file and we can read it from here and debug
+
 docker rm -f super-service-container - remove the crashed container
