@@ -1,0 +1,58 @@
+# The below for deploying .NET 8 API to Azure via GitLab CI/CD
+#The below code is just written I have not tested it because it will consume more time and also it will cost me when I deploy in cloud
+#I can present the below if any free space is given by the company
+
+stages:
+  - test
+  - build
+  - push
+  - deploy
+
+default:
+  image: mcr.microsoft.com/dotnet/sdk:8.0
+
+variables:
+  PROJECT_PATH: "src"
+  TEST_PATH: "test/SuperService.UnitTests.csproj"
+  IMAGE_NAME: "$CI_REGISTRY_IMAGE/super-service:latest"
+  ACR_NAME: "superserviceacr"
+  RESOURCE_GROUP: "super-service-rg"
+  APP_SERVICE_NAME: "super-service-app"
+
+before_script:
+  - echo "Setting up Azure CLI and logging in"
+  - echo $AZURE_CREDENTIALS | base64 -d > azure.json
+  - az login --service-principal --username $(jq -r .clientId azure.json) \
+           --password $(jq -r .clientSecret azure.json) \
+           --tenant $(jq -r .tenantId azure.json)
+
+unit_test:
+  stage: test
+  script:
+    - echo "Running unit tests..."
+    - dotnet test $TEST_PATH --logger trx
+
+build_image:
+  stage: build
+  script:
+    - echo "Building Docker image..."
+    - docker build -t $IMAGE_NAME .
+
+push_to_acr:
+  stage: push
+  script:
+    - echo "Pushing Docker image to Azure Container Registry..."
+    - az acr login --name $ACR_NAME
+    - docker tag $IMAGE_NAME $ACR_NAME.azurecr.io/super-service:latest
+    - docker push $ACR_NAME.azurecr.io/super-service:latest
+
+deploy_to_azure:
+  stage: deploy
+  script:
+    - echo "Deploying to Azure Web App..."
+    - az webapp config container set \
+        --name $APP_SERVICE_NAME \
+        --resource-group $RESOURCE_GROUP \
+        --docker-custom-image-name $ACR_NAME.azurecr.io/super-service:latest \
+        --docker-registry-server-url https://$ACR_NAME.azurecr.io
+    - az webapp restart --name $APP_SERVICE_NAME --resource-group $RESOURCE_GROUP
