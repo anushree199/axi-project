@@ -23,6 +23,7 @@ Create a Git repository which includes instructions on how to run the solution.
 
 ## file structure
 
+```
 super-service/
 ├── src/                      # Main application source code
 │   ├── Controllers/
@@ -41,14 +42,17 @@ super-service/
 │   ├── MockClock.cs
 │   ├── SuperService.UnitTests.csproj
 │   └── TimeControllerTest.cs
-└── https/                   # Development HTTPS certificates (used in Docker container)
-|    ├── localhost.pem
-|    └── localhost-key.pem
+├── https/                    # Development HTTPS certificates (used in Docker container)
+│   ├── localhost.pem
+│   └── localhost-key.pem
 ├── .env                      # Environment variables (like cert paths)
-├── .gitlab-ci.yml            # used by azure cloud if we are containerizing it in cloud        
+├── .gitlab-ci.yml            # GitLab CI/CD config for Azure deployment (optional)
 ├── Dockerfile                # Docker image definition using .NET 8 and HTTPS support
 ├── Deploy.ps1                # PowerShell deployment script for testing, building, and running the container
 └── README.md                 # Project documentation and setup instructions
+```
+
+---
 
 
 # SuperService - .NET 8 Web API with Docker and HTTPS
